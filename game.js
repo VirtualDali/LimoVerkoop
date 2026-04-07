@@ -194,34 +194,67 @@
         $('chartLegend').style.display = 'flex';
         $('chartSaldoLegend').style.display = 'flex';
 
+        // --- Winst bar chart (negatief = naar beneden) ---
         const winsten = S.resultaten.map(r => r.winst);
         const maxAbs = Math.max(...winsten.map(Math.abs), 1);
+        const hasNeg = winsten.some(w => w < 0);
+        const halfH = 65; // half of chart height
 
-        cW.innerHTML = S.resultaten.map(r => {
-            const h = Math.max((Math.abs(r.winst) / maxAbs) * 130, 3);
-            return `<div class="chart-bar-wrap">
-                <span class="chart-bar-val">${euro(r.winst)}</span>
-                <div class="chart-bar ${r.winst >= 0 ? 'pos' : 'neg'}" style="height:${h}px"></div>
-                <span class="chart-bar-lbl">D${r.dag}</span>
-            </div>`;
-        }).join('');
+        if (hasNeg) {
+            // Split layout: top half for positive, bottom half for negative
+            cW.innerHTML = '<div class="chart-split">' + S.resultaten.map(r => {
+                const h = Math.max((Math.abs(r.winst) / maxAbs) * halfH, 2);
+                if (r.winst >= 0) {
+                    return `<div class="chart-col"><span class="chart-bar-val">${euro(r.winst)}</span><div class="chart-half-top"><div class="chart-bar pos" style="height:${h}px"></div></div><div class="chart-half-bot"></div><span class="chart-bar-lbl">D${r.dag}</span></div>`;
+                } else {
+                    return `<div class="chart-col"><div class="chart-half-top"></div><div class="chart-half-bot"><div class="chart-bar neg bar-down" style="height:${h}px"></div></div><span class="chart-bar-val neg-val">${euro(r.winst)}</span><span class="chart-bar-lbl">D${r.dag}</span></div>`;
+                }
+            }).join('') + '</div>';
+        } else {
+            cW.innerHTML = S.resultaten.map(r => {
+                const h = Math.max((r.winst / maxAbs) * 130, 3);
+                return `<div class="chart-bar-wrap"><span class="chart-bar-val">${euro(r.winst)}</span><div class="chart-bar pos" style="height:${h}px"></div><span class="chart-bar-lbl">D${r.dag}</span></div>`;
+            }).join('');
+        }
 
-        // Saldo chart
-        const saldi = S.resultaten.map(r => r.saldoNa);
-        const maxS = Math.max(...saldi, CONFIG.startGeld + 1);
+        // --- Saldo line chart (SVG) ---
+        const saldi = [CONFIG.startGeld, ...S.resultaten.map(r => r.saldoNa)];
+        const minS = Math.min(...saldi) * 0.9;
+        const maxS = Math.max(...saldi) * 1.1 || 1;
+        const svgW = cS.clientWidth - 40 || 400;
+        const svgH = 140;
+        const padL = 0, padR = 0, padT = 20, padB = 20;
+        const plotW = svgW - padL - padR;
+        const plotH = svgH - padT - padB;
 
-        cS.innerHTML = S.resultaten.map(r => {
-            const h = Math.max((r.saldoNa / maxS) * 130, 3);
-            return `<div class="chart-bar-wrap">
-                <span class="chart-bar-val">${euro(r.saldoNa)}</span>
-                <div class="chart-bar pos" style="height:${h}px"></div>
-                <span class="chart-bar-lbl">D${r.dag}</span>
-            </div>`;
-        }).join('');
+        const points = saldi.map((s, i) => {
+            const x = padL + (i / (saldi.length - 1 || 1)) * plotW;
+            const y = padT + plotH - ((s - minS) / (maxS - minS || 1)) * plotH;
+            return { x, y, val: s, label: i === 0 ? 'Start' : 'D' + i };
+        });
+
+        const linePath = points.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+        const startLine = `M${padL},${padT + plotH - ((CONFIG.startGeld - minS) / (maxS - minS || 1)) * plotH} L${padL + plotW},${padT + plotH - ((CONFIG.startGeld - minS) / (maxS - minS || 1)) * plotH}`;
+
+        let svg = `<svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" class="saldo-svg">`;
+        svg += `<line x1="${padL}" y1="${padT + plotH - ((CONFIG.startGeld - minS) / (maxS - minS || 1)) * plotH}" x2="${padL + plotW}" y2="${padT + plotH - ((CONFIG.startGeld - minS) / (maxS - minS || 1)) * plotH}" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>`;
+        svg += `<polyline points="${points.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" fill="none" stroke="#2e8b57" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+        points.forEach(p => {
+            svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#2e8b57" stroke="#fff" stroke-width="2"/>`;
+            svg += `<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1) - 8}" text-anchor="middle" font-size="10" font-weight="600" fill="#374151">${euro(p.val)}</text>`;
+            svg += `<text x="${p.x.toFixed(1)}" y="${svgH - 2}" text-anchor="middle" font-size="10" fill="#9ca3af">${p.label}</text>`;
+        });
+        svg += '</svg>';
+        cS.innerHTML = svg;
     }
 
     // ---- Acties ----
+    let dagBezig = false;
+
     function startDag() {
+        if (dagBezig) return;
+        dagBezig = true;
+
         const glazen = parseInt($('inputGlazen').value) || 0;
         const prijs = parseFloat($('inputPrijs').value) || 0;
         const kosten = glazen * CONFIG.kostenPerGlas;
@@ -229,15 +262,15 @@
 
         if (glazen < 0 || glazen > CONFIG.maxGlazen) {
             err.textContent = `Aantal moet tussen 0 en ${CONFIG.maxGlazen} liggen.`;
-            err.style.display = 'block'; return;
+            err.style.display = 'block'; dagBezig = false; return;
         }
         if (prijs < CONFIG.minPrijs || prijs > CONFIG.maxPrijs) {
             err.textContent = `Prijs moet tussen ${euro(CONFIG.minPrijs)} en ${euro(CONFIG.maxPrijs)} liggen.`;
-            err.style.display = 'block'; return;
+            err.style.display = 'block'; dagBezig = false; return;
         }
         if (kosten > S.saldo) {
             err.textContent = `Onvoldoende saldo! Beschikbaar: ${euro(S.saldo)}, kosten: ${euro(kosten)}.`;
-            err.style.display = 'block'; return;
+            err.style.display = 'block'; dagBezig = false; return;
         }
         err.style.display = 'none';
 
@@ -284,6 +317,7 @@
     }
 
     function volgendeDag() {
+        dagBezig = false;
         $('dagResultaat').style.display = 'none';
 
         if (S.dag >= CONFIG.totaleDagen || S.saldo < CONFIG.kostenPerGlas) {
