@@ -8,31 +8,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Top Bar (dark) -->
+    <!-- Top Bar (dark, minimal like AFAS SB) -->
     <header class="topbar">
         <div class="topbar-left">
             <span class="topbar-hamburger">☰</span>
-            <div class="afas-logo">
-                <span class="afas-logo-circle">KC</span>
-                <span class="afas-logo-text">AFAS KC</span>
-            </div>
+            <span class="topbar-section">Admin Center</span>
         </div>
         <div class="topbar-center">
-            <span class="topbar-env">🍋 Limonade Verkoopspel</span>
+            <span class="topbar-env">🍋 Limonade Verkoopspel ▾</span>
         </div>
-        <div class="topbar-right">
-            <span class="topbar-period" id="topbarPeriod">Dag <strong>1</strong> van <strong>14</strong></span>
-        </div>
+        <div class="topbar-right"></div>
     </header>
 
-    <!-- Tab Bar (white, with blue active underline) -->
+    <!-- Logo + Tab Bar (white, like AFAS SB) -->
     <nav class="tabbar">
         <div class="tabbar-left">
-            <button class="tab active" data-view="dashboard">Algemeen</button>
-            <button class="tab" data-view="verkoop">Verkoop</button>
-            <button class="tab" data-view="resultaten">Resultaten</button>
+            <div class="afas-logo">
+                <svg class="afas-logo-svg" viewBox="0 0 32 32" width="28" height="28">
+                    <circle cx="16" cy="16" r="16" fill="#2e8b57"/>
+                    <path d="M9 17 L14 22 L23 11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="afas-logo-text">AFAS KC</span>
+            </div>
+            <div class="tab-group">
+                <button class="tab active" data-view="dashboard">Algemeen</button>
+                <button class="tab" data-view="verkoop">Verkoop</button>
+                <button class="tab" data-view="resultaten">Resultaten</button>
+            </div>
         </div>
         <div class="tabbar-right">
+            <span class="tabbar-period" id="topbarPeriod">Dag <strong>1</strong> van <strong>14</strong></span>
             <button class="tab-action" id="btnNieuwSpel">↻ Nieuw Spel</button>
         </div>
     </nav>
@@ -107,7 +112,7 @@
 
                     <!-- Highlight: Weer -->
                     <div class="card card-hl card-hl-green">
-                        <div class="card-label"><span id="dWeerEmoji">☀️</span> Weerbericht morgen</div>
+                        <div class="card-label"><span class="hl-badge hl-badge-green" id="dWeerEmoji">☀️</span> Weerbericht morgen</div>
                         <div class="card-big" id="dWeerTemp">25°C</div>
                         <div class="card-sub" id="dWeerDesc">Zonnig</div>
                     </div>
@@ -137,7 +142,7 @@
 
                     <!-- Highlight: Voortgang -->
                     <div class="card card-hl card-hl-blue">
-                        <div class="card-label">📊 Voortgang</div>
+                        <div class="card-label"><span class="hl-badge hl-badge-blue">📊</span> Voortgang</div>
                         <div class="card-big" id="dDag">Dag 1</div>
                         <div class="progress-bar"><div class="progress-fill" id="dProgress" style="width:0%"></div></div>
                     </div>
@@ -146,7 +151,7 @@
                 <div class="dash-row">
                     <!-- Chart: Dagelijkse winst -->
                     <div class="card card-chart-card">
-                        <div class="card-label">Dagelijkse winst</div>
+                        <div class="card-label" style="padding:14px 20px;border-bottom:1px solid #e8eaed">Dagelijkse winst</div>
                         <div class="chart-area" id="chartWinst">
                             <div class="chart-empty">Start het spel om de grafiek te zien</div>
                         </div>
@@ -158,7 +163,7 @@
 
                     <!-- Chart: Saldo verloop -->
                     <div class="card card-chart-card">
-                        <div class="card-label">Saldo verloop</div>
+                        <div class="card-label" style="padding:14px 20px;border-bottom:1px solid #e8eaed">Saldo verloop</div>
                         <div class="chart-area" id="chartSaldo">
                             <div class="chart-empty">Start het spel om de grafiek te zien</div>
                         </div>

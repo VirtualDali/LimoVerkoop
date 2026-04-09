@@ -42,44 +42,25 @@ body {
    ============================================================ */
 
 .topbar {
-    background: var(--topbar);
-    height: 44px;
+    background: #1a1f2e;
+    height: 40px;
     display: flex;
     align-items: center;
     padding: 0 16px;
     gap: 16px;
-    color: var(--topbar-text);
+    color: #8b95a5;
     font-size: 13px;
     z-index: 100;
 }
 
-.topbar-left { display:flex; align-items:center; gap:12px; }
-.topbar-hamburger { font-size:18px; cursor:pointer; opacity:.7; }
-
-.afas-logo { display:flex; align-items:center; gap:8px; }
-
-.afas-logo-circle {
-    width: 28px; height: 28px;
-    background: var(--green);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 11px; font-weight: 700;
-    letter-spacing: .5px;
-}
-
-.afas-logo-text {
-    font-weight: 700;
-    color: #fff;
-    font-size: 15px;
-    letter-spacing: -.2px;
-}
+.topbar-left { display:flex; align-items:center; gap:14px; }
+.topbar-hamburger { font-size:16px; cursor:pointer; opacity:.6; }
+.topbar-section { font-size:13px; font-weight:500; }
 
 .topbar-center { flex:1; text-align:center; }
-.topbar-env { font-size: 13px; color: var(--topbar-text); }
+.topbar-env { font-size:13px; color:#8b95a5; cursor:pointer; }
 
 .topbar-right { display:flex; align-items:center; }
-.topbar-period { font-size:13px; white-space:nowrap; }
-.topbar-period strong { color:#fff; }
 
 /* ============================================================
    TAB BAR  (white strip with blue underline on active tab)
@@ -92,15 +73,38 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    height: 42px;
+    height: 46px;
 }
 
-.tabbar-left { display:flex; gap:0; height:100%; }
+.tabbar-left { display:flex; align-items:center; gap:0; height:100%; }
+
+.afas-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 24px;
+    padding-right: 24px;
+    border-right: 1px solid var(--gray-200);
+    height: 28px;
+}
+
+.afas-logo-svg { flex-shrink:0; }
+
+.afas-logo-text {
+    font-weight: 700;
+    color: var(--gray-900);
+    font-size: 15px;
+    letter-spacing: -.2px;
+    white-space: nowrap;
+}
+
+.tab-group { display:flex; gap:0; height:46px; }
 
 .tab {
     background: none; border: none;
     padding: 0 18px;
-    height: 100%;
+    height: 46px;
+    line-height: 46px;
     font-size: 14px;
     font-family: inherit;
     color: var(--gray-500);
@@ -118,7 +122,14 @@ body {
     font-weight: 600;
 }
 
-.tabbar-right { display:flex; align-items:center; }
+.tabbar-right { display:flex; align-items:center; gap:16px; }
+
+.tabbar-period {
+    font-size: 14px;
+    color: var(--gray-700);
+    white-space: nowrap;
+}
+.tabbar-period strong { color: var(--gray-900); }
 
 .tab-action {
     background: none; border: 1px solid var(--gray-300);
@@ -296,6 +307,23 @@ body {
 .card-hl-blue   { border-left-color: var(--blue); }
 .card-hl-orange { border-left-color: var(--orange); }
 
+/* Highlight badge (round colored, like AFAS SB numbered badges) */
+.hl-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 13px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.hl-badge-green { background: var(--green-bg); }
+.hl-badge-blue { background: var(--blue-light); }
+.hl-badge-orange { background: var(--orange-bg); }
+
 /* ============================================================
    DASHBOARD GRID  (mimics AFAS SB: wide left + narrow right)
    ============================================================ */
@@ -329,11 +357,15 @@ body {
 .card-chart-card .card-label { margin-bottom:0; }
 
 .chart-area {
-    height: 160px;
+    height: 180px;
     display: flex;
     align-items: flex-end;
     gap: 3px;
     padding: 12px 20px 0;
+    background: repeating-linear-gradient(to top, var(--gray-200) 0px, var(--gray-200) 1px, transparent 1px, transparent 36px);
+    background-position: bottom;
+    margin: 0 20px;
+    border-bottom: 1px solid var(--gray-300);
 }
 
 .chart-empty {
@@ -355,8 +387,8 @@ body {
 .chart-bar.bar-down {
     border-radius: 0 0 3px 3px;
 }
-.chart-bar.pos { background: linear-gradient(180deg,#2e8b57,#34d399); }
-.chart-bar.neg { background: linear-gradient(180deg,#d63031,#ff7675); }
+.chart-bar.pos { background: #5bb5a2; }
+.chart-bar.neg { background: #e88b7a; }
 .chart-bar-lbl { font-size:10px; color:var(--gray-400); margin-top:3px; }
 .chart-bar-val { font-size:10px; font-weight:600; color:var(--gray-700); margin-bottom:2px; }
 .chart-bar-val.neg-val { color:var(--red); }
@@ -388,9 +420,9 @@ body {
     font-size:11px; color:var(--gray-500);
 }
 .legend-item { display:flex; align-items:center; gap:5px; }
-.ldot { width:8px; height:8px; border-radius:2px; display:inline-block; }
-.ldot-green { background:var(--green); }
-.ldot-red   { background:var(--red); }
+.ldot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.ldot-green { background:#5bb5a2; }
+.ldot-red   { background:#e88b7a; }
 .ldot-gray  { background:var(--gray-300); }
 
 .dash-cta { text-align:center; margin-top:12px; }

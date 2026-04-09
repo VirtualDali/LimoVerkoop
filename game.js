@@ -238,9 +238,9 @@
 
         let svg = `<svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" class="saldo-svg">`;
         svg += `<line x1="${padL}" y1="${padT + plotH - ((CONFIG.startGeld - minS) / (maxS - minS || 1)) * plotH}" x2="${padL + plotW}" y2="${padT + plotH - ((CONFIG.startGeld - minS) / (maxS - minS || 1)) * plotH}" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>`;
-        svg += `<polyline points="${points.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" fill="none" stroke="#2e8b57" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+        svg += `<polyline points="${points.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" fill="none" stroke="#5bb5a2" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
         points.forEach(p => {
-            svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#2e8b57" stroke="#fff" stroke-width="2"/>`;
+            svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#5bb5a2" stroke="#fff" stroke-width="2"/>`;
             svg += `<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1) - 8}" text-anchor="middle" font-size="10" font-weight="600" fill="#374151">${euro(p.val)}</text>`;
             svg += `<text x="${p.x.toFixed(1)}" y="${svgH - 2}" text-anchor="middle" font-size="10" fill="#9ca3af">${p.label}</text>`;
         });
